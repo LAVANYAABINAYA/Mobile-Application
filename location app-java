@@ -1,0 +1,63 @@
+package com.example.locationapp;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.*;
+import android.location.Address;
+import android.location.Geocoder;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+public class MainActivity extends AppCompatActivity {
+    EditText editText;
+    Button btnGet;
+    TextView result;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        editText = findViewById(R.id.editText);
+        btnGet = findViewById(R.id.btnGet);
+        result = findViewById(R.id.result);
+        btnGet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String input = editText.getText().toString();
+                Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+                try {
+                    if (input.contains(",")) {
+
+                        String[] parts = input.split(",");
+                        double lat = Double.parseDouble(parts[0]);
+                        double lng = Double.parseDouble(parts[1]);
+
+                        List<Address> addresses =
+                                geocoder.getFromLocation(lat, lng, 1);
+
+                        if (addresses != null && addresses.size() > 0) {
+                            Address address = addresses.get(0);
+                            result.setText("Location: "
+                                    + address.getAddressLine(0));
+                        }
+
+                    } else {
+                        List<Address> addresses =
+                                geocoder.getFromLocationName(input, 1);
+
+                        if (addresses != null && addresses.size() > 0) {
+                            Address address = addresses.get(0);
+                            result.setText("Latitude: "
+                                    + address.getLatitude()
+                                    + "\nLongitude: "
+                                    + address.getLongitude());
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
+}
