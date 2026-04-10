@@ -1,0 +1,133 @@
+package com.example.studentsstaffmenuapp;
+
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.HashMap;
+
+public class MainActivity extends AppCompatActivity {
+
+    // Student list
+    String[] students = {
+            "Abisha.G","Ajitha.S","Anantha Darshini.R","Ancy Stalina.V",
+            "Anu Sri Denisha.A","Banupriya.P","Bhava Dharini.S","Chethana.J",
+            "Christa.J","Danyaa Shree.M","Deepikha.M","Dharunika.B",
+            "Dhivya Prabha.S","Gangashree.S","Gayathri.K","Gayathri.S",
+            "Haajra Fathima.S","Hemalatha.S","Ilakkiya.V","Jenifer Hawwa.J",
+            "Kavya.S","Keerthana.K","Lavanya Abinayaa.B","Mahathy Sri.K S",
+            "Malathi.A","Mareeswari.C","Monisha.S","Prema Devi.K",
+            "Rajeswari.M M","Rakshita Rose.K","Rakshitha.K J","Saranya.S",
+            "Saravana Swetha.KM","Shreyaa.S","Sreeja Mary.S","Sri Bharathi.L",
+            "Varshini.V","Veileeswari.B","Yogeshwari.S"
+    };
+
+    // Staff list
+    String[] staff = {
+            "Dr. M. Blessa Binolin Pepsi",
+            "Mrs. A. Muthulakshmi",
+            "Mr. M. V. Balaganesh"
+    };
+
+    // Mappings
+    HashMap<String, String> studentAdvisor = new HashMap<>();
+    HashMap<String, String> staffStudents = new HashMap<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Assign staff advisors permanently to students
+        for (int i = 0; i < students.length; i++) {
+            if (i < 14) {
+                studentAdvisor.put(students[i], staff[0]);
+            } else if (i < 27) {
+                studentAdvisor.put(students[i], staff[1]);
+            } else {
+                studentAdvisor.put(students[i], staff[2]);
+            }
+        }
+
+        // Build staff → students mapping dynamically
+        StringBuilder staff0 = new StringBuilder();
+        StringBuilder staff1 = new StringBuilder();
+        StringBuilder staff2 = new StringBuilder();
+
+        for (String student : students) {
+            String advisor = studentAdvisor.get(student);
+            if (advisor.equals(staff[0])) staff0.append(student).append("\n");
+            else if (advisor.equals(staff[1])) staff1.append(student).append("\n");
+            else staff2.append(student).append("\n");
+        }
+
+        staffStudents.put(staff[0], staff0.toString().trim());
+        staffStudents.put(staff[1], staff1.toString().trim());
+        staffStudents.put(staff[2], staff2.toString().trim());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.viewStudent) {
+            showStudentsDialog();
+        }
+
+        if (item.getItemId() == R.id.viewStaff) {
+            showStaffDialog();
+        }
+
+        return true;
+    }
+
+    // Show all students in a scrollable dialog
+    private void showStudentsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Students List");
+
+        builder.setItems(students, (dialog, which) -> {
+            String student = students[which];
+            String advisor = studentAdvisor.get(student);
+
+            // Show staff advisor in a new dialog
+            new AlertDialog.Builder(this)
+                    .setTitle(student + "'s Advisor")
+                    .setMessage(advisor)
+                    .setPositiveButton("OK", null)
+                    .show();
+        });
+
+        builder.setPositiveButton("Close", null);
+        builder.show();
+    }
+
+    // Show all staff in a scrollable dialog
+    private void showStaffDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Staff Advisors");
+
+        builder.setItems(staff, (dialog, which) -> {
+            String staffName = staff[which];
+            String studentsList = staffStudents.get(staffName);
+
+            // Show all students under this staff in a scrollable dialog
+            String[] studentArray = studentsList.split("\n");
+
+            new AlertDialog.Builder(this)
+                    .setTitle(staffName + "'s Students")
+                    .setItems(studentArray, null)
+                    .setPositiveButton("OK", null)
+                    .show();
+        });
+
+        builder.setPositiveButton("Close", null);
+        builder.show();
+    }
+}
+
