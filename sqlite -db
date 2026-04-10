@@ -1,0 +1,71 @@
+package com.example.studentsqlite;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+public class DBHelper extends SQLiteOpenHelper {
+
+    public static final String DB_NAME = "Student.db";
+
+    public DBHelper(Context context) {
+        super(context, DB_NAME, null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create Table students(" +
+                "id TEXT primary key, " +
+                "name TEXT, " +
+                "age TEXT, " +
+                "course TEXT, " +
+                "marks TEXT)");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop Table if exists students");
+    }
+
+    // Insert
+    public Boolean insertData(String id, String name, String age, String course, String marks) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", id);
+        contentValues.put("name", name);
+        contentValues.put("age", age);
+        contentValues.put("course", course);
+        contentValues.put("marks", marks);
+
+        long result = db.insert("students", null, contentValues);
+        return result != -1;
+    }
+
+    // Delete
+    public Boolean deleteData(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("Select * from students where id = ?", new String[]{id});
+        if (cursor.getCount() > 0) {
+            long result = db.delete("students", "id=?", new String[]{id});
+            return result != -1;
+        } else {
+            return false;
+        }
+    }
+
+    // View All
+    public Cursor getData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("Select * from students", null);
+        return cursor;
+    }
+
+    // Search
+    public Cursor searchData(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("Select * from students where id = ?", new String[]{id});
+        return cursor;
+    }
+}
