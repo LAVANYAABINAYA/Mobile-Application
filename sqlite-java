@@ -1,0 +1,89 @@
+package com.example.studentsqlite;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.*;
+
+public class MainActivity extends AppCompatActivity {
+
+    EditText id, name, age, course, marks;
+    Button insert, delete, view, search;
+    TextView result;
+    DBHelper DB;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        id = findViewById(R.id.id);
+        name = findViewById(R.id.name);
+        age = findViewById(R.id.age);
+        course = findViewById(R.id.course);
+        marks = findViewById(R.id.marks);
+
+        insert = findViewById(R.id.insert);
+        delete = findViewById(R.id.delete);
+        view = findViewById(R.id.view);
+        search = findViewById(R.id.search);
+        result = findViewById(R.id.result);
+
+        DB = new DBHelper(this);
+
+        // Insert
+        insert.setOnClickListener(v -> {
+            Boolean checkInsert = DB.insertData(
+                    id.getText().toString(),
+                    name.getText().toString(),
+                    age.getText().toString(),
+                    course.getText().toString(),
+                    marks.getText().toString()
+            );
+            Toast.makeText(this, checkInsert ? "Inserted" : "Not Inserted", Toast.LENGTH_SHORT).show();
+        });
+
+        // Delete
+        delete.setOnClickListener(v -> {
+            Boolean checkDelete = DB.deleteData(id.getText().toString());
+            Toast.makeText(this, checkDelete ? "Deleted" : "Not Found", Toast.LENGTH_SHORT).show();
+        });
+
+        // View All
+        view.setOnClickListener(v -> {
+            Cursor res = DB.getData();
+            StringBuffer buffer = new StringBuffer();
+
+            while (res.moveToNext()) {
+                buffer.append("ID: " + res.getString(0) + "\n");
+                buffer.append("Name: " + res.getString(1) + "\n");
+                buffer.append("Age: " + res.getString(2) + "\n");
+                buffer.append("Course: " + res.getString(3) + "\n");
+                buffer.append("Marks: " + res.getString(4) + "\n\n");
+            }
+
+            result.setText(buffer.toString());
+        });
+
+        // Search
+        search.setOnClickListener(v -> {
+            Cursor res = DB.searchData(id.getText().toString());
+            if (res.getCount() == 0) {
+                result.setText("No Data Found");
+                return;
+            }
+
+            StringBuffer buffer = new StringBuffer();
+            while (res.moveToNext()) {
+                buffer.append("ID: " + res.getString(0) + "\n");
+                buffer.append("Name: " + res.getString(1) + "\n");
+                buffer.append("Age: " + res.getString(2) + "\n");
+                buffer.append("Course: " + res.getString(3) + "\n");
+                buffer.append("Marks: " + res.getString(4) + "\n");
+            }
+
+            result.setText(buffer.toString());
+        });
+    }
+}
