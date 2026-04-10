@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/buttonOpenWebpage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Webpage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+
+    <Button
+        android:id="@+id/buttonOpenDialer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Dialer"
+        android:layout_below="@id/buttonOpenWebpage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+
+</RelativeLayout>
